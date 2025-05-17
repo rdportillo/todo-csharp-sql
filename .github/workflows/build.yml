@@ -9,6 +9,7 @@ on:
     branches:
       - develop
       - main
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -23,16 +24,26 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+          cache: true
+          cache-dependency-path: ./src/**/packages.lock.json
         
-      - name: DotNet Build
+      - name: DotNet Build & Test
         run: |
           dotnet restore ./src/Todo.Api.sln 
           dotnet build --no-restore ./src/Todo.Api.sln
+          dotnet test ./src/Todo.Api.sln --no-restore --no-build --logger trx --results-directory "TestResults"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: TestResults
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+          cache-dependency-path: ./src/web
 
       - name: Install dependencies
         working-directory: ./src/web
