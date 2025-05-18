@@ -156,6 +156,8 @@ jobs:
           npm run lint
   
   dependency-check:
+    # Requires the repository is public or GitHub Advanced Security licensed 
+    if: false
     needs: versioning
     runs-on: ubuntu-latest
     name: Dependency Check
