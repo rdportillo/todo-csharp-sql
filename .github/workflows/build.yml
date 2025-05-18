@@ -74,31 +74,16 @@ jobs:
           path: TestResults
       
   frontend-build-and-test:
-    if: false
+    needs: versioning
     runs-on: ubuntu-latest
     name: Frontend Build and Test
+    defaults:
+      run:
+        working-directory: ./src/web
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-          cache: true
-          cache-dependency-path: ./src/**/packages.lock.json
-        
-      - name: DotNet Build & Test
-        run: |
-          dotnet restore ./src/Todo.Api.sln 
-          dotnet build --no-restore ./src/Todo.Api.sln
-          dotnet test ./src/Todo.Api.sln --no-restore --no-build --logger trx --results-directory "TestResults"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-test-results
-          path: TestResults
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -107,8 +92,14 @@ jobs:
           cache: npm
           cache-dependency-path: ./src/web
 
-      - name: Install dependencies
-        working-directory: ./src/web
+      - name: Node Install dependencies
         run: | 
-          npm install
+          npm ci
+
+      - name: Node Test
+        run: | 
+          npm run lint
+
+      - name: Node Build
+        run: | 
           npm run build
