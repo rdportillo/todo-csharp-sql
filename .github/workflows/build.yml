@@ -154,3 +154,22 @@ jobs:
       - name: Node Test
         run: | 
           npm run lint
+  
+  dependency-check:
+    # Requires the repository is public or GitHub Advanced Security licensed 
+    if: false
+    needs: versioning
+    runs-on: ubuntu-latest
+    name: Dependency Check
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          comment-summary-in-pr: always
