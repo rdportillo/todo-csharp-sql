@@ -154,3 +154,11 @@ jobs:
       - name: Node Test
         run: | 
           npm run lint
+  
+  dependency-check:
+    needs: versioning
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
