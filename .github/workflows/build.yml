@@ -123,7 +123,7 @@ jobs:
       - uses: github/super-linter@v6
         env:
           DEFAULT_BRANCH: "main"
-          VALIDATE_ALL_CODE_BASE: "false"
+          VALIDATE_ALL_CODEBASE: "false"
           VALIDATE_YAML: "true"
           VALIDATE_CSHARP: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
