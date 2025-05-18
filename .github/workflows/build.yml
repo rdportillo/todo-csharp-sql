@@ -11,6 +11,10 @@ on:
       - main
   workflow_dispatch: 
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   versioning:
     runs-on: ubuntu-latest
@@ -122,7 +126,7 @@ jobs:
           VALIDATE_ALL_CODE_BASE: "false"
           VALIDATE_YAML: "true"
           VALIDATE_CSHARP: "true"
-          GIT_HUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   frontend-lint:
     needs: versioning
