@@ -105,7 +105,7 @@ jobs:
           npm run build
 
   backend-lint:
-    needs: [backend-build-and-test]
+    needs: versioning
     runs-on: ubuntu-latest
     name: Backend Lint
       
@@ -125,7 +125,7 @@ jobs:
           GIT_HUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   frontend-lint:
-    needs: [frontend-build-and-test]
+    needs: versioning
     runs-on: ubuntu-latest
     name: Frontend Lint
     defaults:
