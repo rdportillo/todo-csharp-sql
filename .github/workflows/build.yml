@@ -40,9 +40,43 @@ jobs:
           git push --tags
         if: github.ref == 'refs/heads/main'
   
-  build:
+  backend-build-and-test:
+    needs: versioning
     runs-on: ubuntu-latest
-    name: Build Project
+    name: Backend Build and Test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+          cache: true
+          cache-dependency-path: ./src/**/packages.lock.json
+
+      - name: DotNet Restore
+        run: |
+          dotnet restore ./src/Todo.Api.sln 
+        
+      - name: DotNet Build
+        run: |
+          dotnet build --no-restore ./src/Todo.Api.sln
+
+      - name: DotNet Test
+        run: |
+          dotnet test --no-restore --no-build ./src/Todo.Api.sln --configuration Release --logger trx --results-directory "TestResults"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: TestResults
+      
+  frontend-build-and-test:
+    if: false
+    runs-on: ubuntu-latest
+    name: Frontend Build and Test
 
     steps:
       - name: Checkout code
