@@ -187,6 +187,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+          cache: true
+          cache-dependency-path: ./src/**/packages.lock.json
+
+      - name: DotNet Restore
+        run: |
+          dotnet restore ./src/Todo.Api.sln 
+        
+      - name: DotNet Build
+        run: |
+          dotnet build --no-restore --configuration Release ./src/Todo.Api.sln
+
       - uses: github/codeql-action/init@v3
         name: Initialize CodeQL - Backend
         with:
