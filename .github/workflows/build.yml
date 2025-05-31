@@ -208,12 +208,10 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
 
       - if: ${{ matrix.build-mode == 'manual' }}
-        name: Build C# code manually
+        name: DotNet Restore and Build
         run: |
-          echo 'Starting manual build for C# code...'
-          dotnet restore
-          dotnet build --configuration Release ./src/Todo.Api.sln
-          echo 'Manual build complete.'
+          dotnet restore ./src/Todo.Api.sln 
+          dotnet build --no-restore --configuration Release ./src/Todo.Api.sln
 
       - uses: github/codeql-action/analyze@v3
         name: Analyse CodeQL - Backend
