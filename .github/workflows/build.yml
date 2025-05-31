@@ -189,7 +189,7 @@ jobs:
         include:
           - name: Backend
             language: csharp
-            build-mode: manual
+            build-mode: autobuild
           - name: Frontend
             language: javascript
             build-mode: none
@@ -197,13 +197,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - if: ${{ matrix.build-mode == 'manual' }}
-        name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-          cache: true
-          cache-dependency-path: ./src/**/packages.lock.json
+      # if: ${{ matrix.build-mode == 'manual' }}
+      #  name: Set up .NET Core
+      #  uses: actions/setup-dotnet@v4
+      #  with:
+      #    dotnet-version: '8.x'
+      #    cache: true
+      #    cache-dependency-path: ./src/**/packages.lock.json
 
       - uses: github/codeql-action/init@v3
         name: Initialize CodeQL - ${{ matrix.name }}
@@ -211,11 +211,11 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - if: ${{ matrix.build-mode == 'manual' }}
-        name: DotNet Restore and Build
-        run: |
-          dotnet restore ./src/Todo.Api.sln 
-          dotnet build --no-restore --configuration Release ./src/Todo.Api.sln
+      # if: ${{ matrix.build-mode == 'manual' }}
+      #  name: DotNet Restore and Build
+      #  run: |
+      #    dotnet restore ./src/Todo.Api.sln 
+      #    dotnet build --no-restore --configuration Release ./src/Todo.Api.sln
 
       - uses: github/codeql-action/analyze@v3
         name: Analyse CodeQL - ${{ matrix.name }}
