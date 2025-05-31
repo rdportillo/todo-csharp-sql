@@ -212,7 +212,7 @@ jobs:
         run: |
           echo 'Starting manual build for C# code...'
           dotnet restore
-          dotnet build --configuration Release
+          dotnet build --configuration Release ./src/Todo.Api.sln
           echo 'Manual build complete.'
 
       - uses: github/codeql-action/analyze@v3
