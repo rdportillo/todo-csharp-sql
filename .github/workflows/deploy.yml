@@ -29,7 +29,7 @@ jobs:
       - name: Generate docker image registry
         id: docker-image-registry
         run: |
-          echo "docker-container-registry=${{ DOCKER_CONTAINER_REGISTRY }}/${{ DOCKERHUB_REPOSITORY }}:${{steps.get-version.outputs.version  }}" >> "$GITHUB_OUTPUT"
+          echo "docker-container-registry=${{ vars.DOCKER_CONTAINER_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ steps.get-version.outputs.version  }}" >> "$GITHUB_OUTPUT"
 
   deploy-to-google-cloud:
     name: Deploy to Google Cloud
