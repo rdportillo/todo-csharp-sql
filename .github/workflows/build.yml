@@ -228,13 +228,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         name: Initialize CodeQL - ${{ matrix.name }}
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         name: Analyse CodeQL - ${{ matrix.name }}
         with:
           category: "/language:${{ matrix.language }}"
