@@ -56,7 +56,6 @@ jobs:
         with:
           name: version
           path: version.txt
-        if: github.ref == 'refs/heads/main'
   
   backend-build-and-test:
     needs: versioning
