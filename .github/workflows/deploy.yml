@@ -22,12 +22,14 @@ jobs:
         with:
           name: version
           path: ./
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Get version from file
         id: get-version
         run: |
           VALUE=$(cat ./version.txt)
+          echo "::notice:: $VALUE"
           echo "version=$VALUE" >> "$GITHUB_OUTPUT"
       
       - name: Generate docker image registry
