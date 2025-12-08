@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get-version.outputs.version }}
-      docker-container-registry: ${{ steps.docker-imge-registry.outputs.docker-container-registry }}
+      docker-container-registry: ${{ steps.docker-image-registry.outputs.docker-container-registry }}
     
     steps:
       - uses: actions/download-artifact@v4
@@ -35,7 +35,7 @@ jobs:
       - name: Generate docker image registry
         id: docker-image-registry
         run: |
-          echo "docker-container-registry=${{ vars.DOCKER_CONTAINER_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ steps.get-version.outputs.version  }}" >> "$GITHUB_OUTPUT"
+          echo "docker-container-registry=${{ vars.DOCKER_CONTAINER_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ steps.get-version.outputs.version }}" >> "$GITHUB_OUTPUT"
 
   deploy-to-google-cloud:
     name: Deploy to Google Cloud
@@ -55,5 +55,5 @@ jobs:
         with:
           project_id: ${{ vars.GCP_PROJECT_ID }}
           service: ${{ vars.GCP_RUN_SERVICE }}
-          image: ${{ needs.versioning.outputs.docker-container-registry }} #docker.io/rdportillo/todo-app:latest
+          image: ${{ needs.versioning.outputs.docker-container-registry }}
           region: ${{ vars.GCP_RUN_REGION }}
