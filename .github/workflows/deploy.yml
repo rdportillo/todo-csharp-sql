@@ -1,0 +1,53 @@
+name: Deploy Application
+
+on:
+  workflow_run:
+    workflows: ["Build Project"]
+    types:
+      - completed
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      docker-container-registry: ${{ steps.docker-imge-registry.outputs.docker-container-registry }}
+    
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: version
+          path: ./
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Get version from file
+        id: get-version
+        run: |
+          VALUE=$(cat ./version.txt)
+          echo "version=$VALUE" >> "$GITHUB_OUTPUT"
+      
+      - name: Generate docker image registry
+        id: docker-image-registry
+        run: |
+          echo "docker-container-registry=${{ vars.DOCKER_CONTAINER_REGISTRY }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ steps.get-version.outputs.version  }}" >> "$GITHUB_OUTPUT"
+
+  deploy-to-google-cloud:
+    name: Deploy to Google Cloud
+    needs: versioning
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    environment: staging
+
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+      - uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          service: ${{ vars.GCP_RUN_SERVICE }}
+          image: ${{ needs.versioning.outputs.docker-container-registry }} #docker.io/rdportillo/todo-app:latest
+          region: ${{ vars.GCP_RUN_REGION }}
