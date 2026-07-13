@@ -19,7 +19,7 @@ jobs:
       docker-container-registry: ${{ steps.docker-image-registry.outputs.docker-container-registry }}
     
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: version
           path: ./
