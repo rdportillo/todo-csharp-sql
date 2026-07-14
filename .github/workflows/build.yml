@@ -259,7 +259,7 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           path: app
-          merge-multple: false
+          merge-multiple: false
 
       - name: Build Docker Image
         run: |
