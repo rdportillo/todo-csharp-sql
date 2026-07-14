@@ -133,6 +133,6 @@ jobs:
       #     secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # - name: 'Test the deployment'
-        run: |-
-          echo "::notice:: ${{ steps.deploy-to-ecs.outputs.url }}/index.html"
-          curl -I --fail "${{ steps.deploy-to-ecs.outputs.url }}/index.html"
+        # run: |-
+        #   echo "::notice:: ${{ steps.deploy-to-ecs.outputs.url }}/index.html"
+        #   curl -I --fail "${{ steps.deploy-to-ecs.outputs.url }}/index.html"
