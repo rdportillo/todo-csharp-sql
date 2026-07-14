@@ -95,3 +95,44 @@ jobs:
         run: |-
           echo "::notice:: ${{ steps.deploy-to-webapp.outputs.url }}/index.html"
           curl -I --fail "${{ steps.deploy-to-webapp.outputs.url }}/index.html"
+
+  deploy-to-aws:
+    name: Deploy to Amazon Web Services
+    needs: versioning
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        environment: [staging, production]
+    environment: ${{ matrix.environment }}
+    env:
+      TASK_DEDINITION_PATH: ./infra/aws/amazon-ecs-task-definition.json
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Configura AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # - name: Deploy to AWS ECS
+      #   id: deploy-to-ecs
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     cluster: ${{ vars.AWS_ECS_CLUSTER_NAME }}
+      #     service: ${{ vars.AWS_ECS_SERVICE_NAME }}
+      #     task-definition: ${{ vars.AWS_ECS_TASK_DEFINITION }}
+      #     container-image: ${{ needs.versioning.outputs.docker-container-registry }}
+      #     container-name: ${{ vars.AWS_ECS_CONTAINER_NAME }}
+      #     access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # - name: 'Test the deployment'
+        # run: |-
+        #   echo "::notice:: ${{ steps.deploy-to-ecs.outputs.url }}/index.html"
+        #   curl -I --fail "${{ steps.deploy-to-ecs.outputs.url }}/index.html"
