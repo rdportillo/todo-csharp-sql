@@ -120,19 +120,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      # - name: Deploy to AWS ECS
-      #   id: deploy-to-ecs
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     cluster: ${{ vars.AWS_ECS_CLUSTER_NAME }}
-      #     service: ${{ vars.AWS_ECS_SERVICE_NAME }}
-      #     task-definition: ${{ vars.AWS_ECS_TASK_DEFINITION }}
-      #     container-image: ${{ needs.versioning.outputs.docker-container-registry }}
-      #     container-name: ${{ vars.AWS_ECS_CONTAINER_NAME }}
-      #     access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.TASK_DEDINITION_PATH }}
+          container-name: ${{ vars.AWS_ECS_CONTAINER_NAME }}
+          image: ${{ needs.versioning.outputs.docker-container-registry }}
+          environment-variables: |
+            SQL_CONNECTION_STRING=${{ secrets.AWS_CONNECTION_STRING }}
 
-      # - name: 'Test the deployment'
-        # run: |-
-        #   echo "::notice:: ${{ steps.deploy-to-ecs.outputs.url }}/index.html"
-        #   curl -I --fail "${{ steps.deploy-to-ecs.outputs.url }}/index.html"
+      - name: Deploy Amazon ECS task definition
+        id: deploy-to-ecs
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-definition }}
+          cluster: ${{ vars.AWS_ECS_CLUSTER }}
+          service: ${{ vars.AWS_ECS_SERVICE }}
+
+      - name: 'Test the deployment'
+        run: |-
+          echo "::notice:: ${{ vars.AWS_ECS_LOAD_BALANCER_ENDPOINT }}/index.html"
+          curl -I --fail "${{ vars.AWS_ECS_LOAD_BALANCER_ENDPOINT }}/index.html"
